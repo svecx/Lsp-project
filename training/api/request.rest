@@ -1,0 +1,30 @@
+Get http://localhost:5000/users
+
+###
+Get http://localhost:5000/users/1
+
+###
+post http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name": "sinatra",
+    "email": "sinatrakusuma015@gmail.com",
+    "gender": "female"
+
+}
+
+###
+PATCH  http://localhost:5000/users/3
+Content-Type: application/json
+
+{
+    "name": "kusuma",
+    "email": "sinatrakusuma015@gmail.com",
+    "gender": "male"
+}
+
+###
+DELETE http://localhost:5000/users/3
+
+
