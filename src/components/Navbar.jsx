@@ -33,7 +33,35 @@ const Navbar = () => {
     );
     // Menggunakan searchResults di sini jika diperlukan
     console.log("Search Results:", searchResults);
+
+    // Menyimpan nilai pencarian ke dalam local storage
+    localStorage.setItem("search", searchInput);
+
+    // Memuat ulang halaman
+    window.location.reload();
   };
+
+  useEffect(() => {
+    // Mengambil nilai pencarian dari local storage saat komponen dimuat
+    const storedSearch = localStorage.getItem("search");
+    setSearchInput(storedSearch || "");
+  }, []);
+
+  useEffect(() => {
+    // Mendaftarkan event listener untuk storage event
+    const handleStorageChange = (e) => {
+      if (e.key === "search") {
+        setSearchInput(e.newValue || "");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      // Membersihkan event listener saat komponen tidak lagi digunakan
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   return (
     <nav
@@ -103,9 +131,6 @@ const Navbar = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
-              <button className="btn btn-outline-dark" type="submit">
-                Search
-              </button>
             </form>
           </ul>
         </div>

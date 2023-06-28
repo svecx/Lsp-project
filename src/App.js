@@ -7,6 +7,7 @@ import "./style.scss";
 import Dashboard from "./pages/Dashboard";
 import SinglePage from "./pages/SinglePage";
 import AddArticle from "./pages/AddArticle";
+import EditArticle from "./pages/EditArticle";
 
 const Layout = () => {
   return (
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <Dashboard />,
+      },
+      {
+        path: "/admin/:postId",
+        element: <EditArticle />,
       },
       {
         path: "/post/:postId",

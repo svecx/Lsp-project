@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [articles, setArticles] = useState([]);
-  const [newArticleTitle, setNewArticleTitle] = useState("");
-  const [newArticleContent, setNewArticleContent] = useState("");
-  const [newArticleImage, setNewArticleImage] = useState(null);
   const [comments, setComments] = useState([]);
 
   const retrieveUserComments = () => {
@@ -15,23 +13,6 @@ const Dashboard = () => {
   useEffect(() => {
     retrieveUserComments();
   }, []);
-
-  const createArticle = () => {
-    const newArticle = {
-      title: newArticleTitle,
-      content: newArticleContent,
-      image: newArticleImage,
-    };
-    setArticles([...articles, newArticle]);
-    setNewArticleTitle("");
-    setNewArticleContent("");
-    setNewArticleImage(null);
-  };
-
-  const deleteArticle = (index) => {
-    const updatedArticles = articles.filter((article, i) => i !== index);
-    setArticles(updatedArticles);
-  };
 
   const deleteComment = (index) => {
     const updatedComments = comments.filter((comment, i) => i !== index);
@@ -48,13 +29,8 @@ const Dashboard = () => {
     console.log(report);
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    setNewArticleImage(URL.createObjectURL(file));
-  };
-
   useEffect(() => {
-    const storedPosts = JSON.parse(localStorage.getItem("post")) || [];
+    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     setArticles(storedPosts);
   }, []);
 
@@ -62,13 +38,7 @@ const Dashboard = () => {
     const updatedPosts = [...articles];
     updatedPosts.splice(index, 1);
     setArticles(updatedPosts);
-    localStorage.setItem("post", JSON.stringify(updatedPosts));
-  };
-
-  const editPost = (index) => {
-    // Implement the edit functionality for a post at the specified index
-    // You can use this function to update the post data in the state and localStorage
-    console.log("Edit post at index:", index);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
   return (
@@ -76,34 +46,46 @@ const Dashboard = () => {
       <h2>Dashboard Admin</h2>
       <hr />
 
-      {/* Kelola Artikel */}
+      {/* Tabel Data Post */}
       <div className="mb-4">
-        <h5>Daftar Artikel:</h5>
-        {articles.map((article, index) => (
-          <div key={index} className="card mb-3">
-            <div className="card-body">
-              <h5 className="card-title">{article.title}</h5>
-              {article.image && (
-                <div className="form-group">
-                  <img
-                    src={article.image}
-                    alt="Preview"
-                    style={{ width: "200px" }}
-                  />
-                </div>
-              )}
-              <p className="card-text">{article.content}</p>
-              <button
-                className="btn btn-danger"
-                onClick={() => deleteArticle(index)}
-              >
-                Hapus Artikel
-              </button>
-            </div>
-          </div>
-        ))}
+        <h4>Laporan Artikel</h4>
+        <hr />
+        <h5>Data Artikel:</h5>
+        {articles.length === 0 ? (
+          <p>Tidak ada data post</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Title</th>
+                <th>Desc</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {articles.map((post, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{post.title}</td>
+                  <td>{post.desc}</td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => deletePost(index)}
+                    >
+                      Hapus
+                    </button>
+                    <Link to={`/admin/${post.id}`} className="btn btn-primary">
+                      Edit
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-
       {/* Kelola Komentar */}
       <div className="mb-4">
         <h4>Kelola Komentar</h4>
@@ -135,50 +117,6 @@ const Dashboard = () => {
                       onClick={() => deleteComment(index)}
                     >
                       Hapus Komentar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* Tabel Data Post */}
-      <div className="mb-4">
-        <h4>Laporan Artikel</h4>
-        <hr />
-        <h5>Data Post:</h5>
-        {articles.length === 0 ? (
-          <p>Tidak ada data post</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Title</th>
-                <th>Desc</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {articles.map((post, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{post.title}</td>
-                  <td>{post.desc}</td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => deletePost(index)}
-                    >
-                      Hapus
-                    </button>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => editPost(index)}
-                    >
-                      Edit
                     </button>
                   </td>
                 </tr>

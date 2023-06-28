@@ -7,6 +7,7 @@ const Home = () => {
   const [email, setEmail] = useState({});
   const [commentText, setCommentText] = useState({});
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   const handleCommentSubmit = (e, postId) => {
     e.preventDefault();
@@ -40,12 +41,37 @@ const Home = () => {
   useEffect(() => {
     const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     setPosts(storedPosts);
+
+    // Ambil nilai pencarian dari local storage
+    const searchInput = localStorage.getItem("search") || "";
+
+    // Bandingkan nilai pencarian dengan judul (title) dari postingan
+    const filtered = storedPosts.filter((post) =>
+      post.title.toLowerCase().includes(searchInput.toLowerCase())
+    );
+
+    // Setel daftar postingan yang telah difilter
+    setFilteredPosts(filtered.length > 0 ? filtered : storedPosts);
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "search") {
+        window.location.reload(); // Refresh halaman saat ada perubahan di local storage "search"
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (
     <div className="container mt-3">
       <div className="row">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <div className="col-md-4" key={post.id}>
             <div className="card mb-4">
               <div className="ratio ratio-4x3">
